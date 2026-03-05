@@ -10,8 +10,8 @@ import { AppHttpError } from '../../../../core/models/app-http-error.model';
   selector: 'app-category-list',
   standalone: true,
   imports: [CommonModule, RouterLink],
-  templateUrl: './category-list.html',
-  styleUrl: './category-list.css'
+  templateUrl: './category-list.component.html',
+  styleUrl: './category-list.component.css'
 })
 export class CategoryListComponent implements OnInit {
 
