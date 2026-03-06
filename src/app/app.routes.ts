@@ -1,5 +1,8 @@
 import { Routes } from '@angular/router';
 
+import { CategoryCreateComponent }
+    from './features/categories/components/category-create/category-create.component';
+
 /****************************
  * NOTE:
  *    - loadComponent() Is the modern equivalent of lazy loading feature of the module.
@@ -9,15 +12,20 @@ import { Routes } from '@angular/router';
  *                      ALWAYS place more specific routes before parameterized routes.
  ***********/
 
+
 /**
  * Defines the Route Table
  */
 export const routes: Routes = [
-  {
-    path: 'categories',
-    pathMatch: 'prefix',              // match with '/categories', '/categories/edit/10', '/categories/create', etc.
-    loadComponent: () =>
-      import('./features/categories/components/category-list/category-list.component')
-        .then(m => m.CategoryListComponent)
-  }
+    {
+        path: 'categories',
+        pathMatch: 'prefix',              // match with '/categories', '/categories/edit/10', '/categories/create', etc.
+        loadComponent: () =>
+            import('./features/categories/components/category-list/category-list.component')
+                .then(m => m.CategoryListComponent)
+    },
+    {
+        path: 'categories/create',
+        component: CategoryCreateComponent
+    }
 ];

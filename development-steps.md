@@ -16,8 +16,8 @@ Reason for naming the DTO models for Category and Product, the same as backend:
 
 ## Step 01: Create Project
 
-1. Create new Angular Project.  
-2. Build.  
+1. Create new Angular Project.
+2. Build.
 3. Run.
 
 #### Configure .gitignore to not include .vs folder
@@ -43,12 +43,12 @@ In the `.gitignore` file, add an entry for the `.vs` folder, to ignore checking-
 
 
 ## Step 03: Configure the API Base URL
-    
+
 It solves:
 - Environment-based URL management
 - Runtime configuration
 - Deployment flexibility
-    
+
 STEPS:
 1. add the `src/app/core/config/app-config.interface.ts`
 2. add the `src/app/core/config/app-config.token.ts`
@@ -59,7 +59,7 @@ STEPS:
 ---
 
 
-## Step 04: Register HttpClient 
+## Step 04: Register HttpClient
 
 1. Register HttpClient into the DI Providers in src/app/app.config.ts
 2. Build.
@@ -101,7 +101,7 @@ STEPS:
     - AppHttpError from the file `src/app/core/models/app-http-error.model.ts`
     - ProblemDetails and ValidationProblemDetails from the file `src/app/core/models/problem-details.model.ts`
       The reason why both the interface models are declared in one single file
-      is to address an issue of cyclic reference, since ValidationProblemDetails extends ProblemDetails 
+      is to address an issue of cyclic reference, since ValidationProblemDetails extends ProblemDetails
       and would need an import directive in both files, which causes a cyclic reference issue.
 2. In `app.config.ts` file, register the Interceptor modifying the HttpClient registration.
 3. Build.
@@ -142,7 +142,7 @@ Instead:
     Components
 ```
 
-That keeps components simple and testable.  
+That keeps components simple and testable.
 
 ----
 
@@ -155,7 +155,7 @@ It will:
 - Does not hide status codes
 - Be JWT-ready
 - Be easily testable
-- Not duplicate the logic defined by the backend 
+- Not duplicate the logic defined by the backend
 - Works with Interceptor
 - Works with loading strategy
 
@@ -199,7 +199,8 @@ STEPS:
      Add the `global-spinner.component.css` file
   b. Register the GlobalSpinnerComponent in the Root Component in the `src/app/app.ts` file <br />
      Also register `RouterLink`, `RouterLinkActive` components, used by the template.
-  c. Wire it into the root layout in the `src/app/app.html` <br />
+  c. Redesign the `src/app/app.html` with BootStrap Template (if desired).
+  d. Ensure that the GlobalSpinnerComponent is wired into the root layout in the `src/app/app.html` <br />
      ```
       <app-global-spinner></app-global-spinner>
       <router-outlet></router-outlet>
@@ -229,7 +230,7 @@ We have now completed:
 
 ## Step 09: Run a Basic Test on the project
 
-1. Prepare the test in the .spec.ts file for the component.  
+1. Prepare the test in the .spec.ts file for the component.
    Eg: `app.spect.ts` file runs the test for the app component.
 2. Build
    ```
@@ -246,6 +247,8 @@ We have now completed:
 
 
 ## Step 10: Define folder structure for working with the Category API endpoints
+
+Create the following folders:
 
     ```
     features/
@@ -266,7 +269,7 @@ We have now completed:
 
 Define the Contracts for the Category API in the `src/app/features/categories/models` folder
 
-We add the models before setting up the service client.  
+We add the models before setting up the service client.
 
 Reason:
 - Models define the contract.
@@ -343,20 +346,20 @@ Ensure that you are in the project root folder.
 This will generate the following files:
 - `src/app/features/categories/components/category-list/category-list.spec.ts`
 - `src/app/features/categories/components/category-list/category-list.ts`
-- `src/app/features/categories/components/category-list/category-list.css` 
-- `src/app/features/categories/components/category-list/category-list.html` 
+- `src/app/features/categories/components/category-list/category-list.css`
+- `src/app/features/categories/components/category-list/category-list.html`
 
 Since this is fundamentally a component, and since it is generated inside the "components" folder, Angular 17+ uses
-the newer naming convention of not adding the `.component` suffix for the component.  However, the naming convention 
-for models and services is still the conventional one.  
+the newer naming convention of not adding the `.component` suffix for the component.  However, the naming convention
+for models and services is still the conventional one.
 
 Hence, rename the files, by adding the `.component` suffix!
 
 So, the final files would be:
     - `src/app/features/categories/components/category-list/category-list.component.spec.ts`
     - `src/app/features/categories/components/category-list/category-list.component.ts`
-    - `src/app/features/categories/components/category-list/category-list.component.css` 
-    - `src/app/features/categories/components/category-list/category-list.component.html` 
+    - `src/app/features/categories/components/category-list/category-list.component.css`
+    - `src/app/features/categories/components/category-list/category-list.component.html`
 
 Since we renamed the .html and .css files, we need to correct the references in the `category-list.component.ts` file:
 ```
@@ -371,8 +374,8 @@ Since we renamed the .html and .css files, we need to correct the references in 
 3. Finally, manually create each of the four files needed for the category-list component:
     - `src/app/features/categories/components/category-list/category-list.component.spec.ts`
     - `src/app/features/categories/components/category-list/category-list.component.ts`
-    - `src/app/features/categories/components/category-list/category-list.component.css` 
-    - `src/app/features/categories/components/category-list/category-list.component.html` 
+    - `src/app/features/categories/components/category-list/category-list.component.css`
+    - `src/app/features/categories/components/category-list/category-list.component.html`
 
 ### Next, check if the generated component builds and tests properly
 
@@ -397,4 +400,91 @@ We can now, proceed to write the code for the component!
 
 ---
 
+## Step 15: Define the Category-Create Component
 
+### GOAL:
+
+- Demonstrates Typed Reactive Forms
+- Handles input validation on the client-side
+- Integrates with the CategoryService to create a new category calling the API
+- Handles validation errors (`ValidationProblemDetails`) from the API
+- Provides user feedback on success or failure
+- Prepares for navigation back to the list after creation
+- Demonstrates a clean and testable component structure
+
+
+### Generate the component files:
+
+```
+   > ng generate component features/categories/components/category-create --standalone
+
+   OR
+
+   > ng g c features/categories/components/category-create --standalone
+```
+
+Then, rename the generated files to add the `.component` suffix:
+  - `src/app/features/categories/components/category-create/category-create.component.spec.ts`
+  - `src/app/features/categories/components/category-create/category-create.component.ts`
+  - `src/app/features/categories/components/category-create/category-create.component.css`
+  - `src/app/features/categories/components/category-create/category-create.component.html`
+
+Don't forget to update the references in the `category-create.component.ts` file:
+```
+    templateUrl: './category-create.component.html',
+    styleUrl: './category-create.component.css'
+```
+Correct the name of the component class in the `category-create.component.ts` file:
+```
+    export class CategoryCreateComponent {
+```
+and in the reference in the `category-create.component.spec.ts` file:
+```
+    import { CategoryCreateComponent } from './category-create.component';
+
+    ALSO CORRECT All references from CategoryCreate to CategoryCreateComponent in the .spec.ts file
+```
+
+Next, check if the generated component builds and tests properly
+```
+    > ng build
+    > ng test
+    > ng serve
+```
+
+### Check if the newly added component works as expected:
+
+Register the route to the component in the `src/app/app.routes.ts` file:
+```
+  ,
+  {
+    path: 'categories/create',
+    pathMatch: 'prefix',
+    loadComponent: () =>
+      import('./features/categories/components/category-create/category-create.component')
+        .then(m => m.CategoryCreate)
+  }
+```
+
+- Check if the component builds and tests properly.
+- Run the application to check if the route works.
+- Navigate to the Categories List, and click on the "Add" button.
+- You should be navigated to the component.  Check out the URL!
+```
+    > ng build
+    > ng test
+    > ng serve
+```
+
+### Next, we will implement the component logic and UI.
+
+STEPS:
+1. Create the `category-create.form.ts` file, and define the Typed Reactive Form in it.
+2. Implement the component logic in the `category-create.component.ts` file
+3. Implement the component UI in the `category-create.component.html` file
+4. Customize the UI with CSS in the `category-create.component.css` file
+5. Define the tests in the `category-create.component.spec.ts` file
+6. Build
+7. Run
+
+---

@@ -12,106 +12,112 @@ import { CategoryReadModel } from '../../models/category-read.model';
 
 describe('CategoryListComponent', () => {
 
-  let component: CategoryListComponent;
-  let fixture: ComponentFixture<CategoryListComponent>;
+    let component: CategoryListComponent;
+    let fixture: ComponentFixture<CategoryListComponent>;
 
-  let categoryServiceMock: {
-    getAll: ReturnType<typeof vi.fn>;
-  };
-
-
-
-  beforeEach(async () => {
-
-    categoryServiceMock = {
-      getAll: vi.fn()
+    let categoryServiceMock: {
+        getAll: ReturnType<typeof vi.fn>;
     };
 
-    await TestBed.configureTestingModule({
-      imports: [CategoryListComponent],
-      providers: [
-        provideRouter([]),
-        {
-          provide: CategoryService,
-          useValue: categoryServiceMock
-        }
-      ]
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(CategoryListComponent);
-    component = fixture.componentInstance;
-  });
 
 
-  // ----- Test #1
-  it('should create the component', () => {
-    expect(component).toBeTruthy();
-  });
+    beforeEach(async () => {
+
+        categoryServiceMock = {
+            getAll: vi.fn()
+        };
+
+        await TestBed.configureTestingModule({
+            imports: [CategoryListComponent],
+            providers: [
+                provideRouter([]),
+                {
+                    provide: CategoryService,
+                    useValue: categoryServiceMock
+                }
+            ]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(CategoryListComponent);
+        component = fixture.componentInstance;
+    });
 
 
-  // ----- Test #2
-  it('should load categories on init', () => {
-
-    const mockCategories: CategoryReadModel[] = [
-      {
-        categoryId: 1,
-        name: 'Electronics',
-        description: 'Devices',
-        createdAtUtc: new Date().toISOString(),
-        modifiedAtUtc: null,
-        rowVersion: 'abc'
-      }
-    ];
-
-    categoryServiceMock.getAll.mockReturnValue(of(mockCategories));
-
-    fixture.detectChanges();
-
-    expect(component.categories.length).toBe(1);
-    expect(categoryServiceMock.getAll).toHaveBeenCalled();
-  });
+    // ----- Test #1
+    it('should create the component', () => {
+        expect(component).toBeTruthy();
+    });
 
 
-  // ----- Test #3
-  it('should display categories in table', () => {
+    // ----- Test #2
+    it('should load categories on init', () => {
 
-    const mockCategories: CategoryReadModel[] = [
-      {
-        categoryId: 1,
-        name: 'Electronics',
-        description: 'Devices',
-        createdAtUtc: new Date().toISOString(),
-        modifiedAtUtc: null,
-        rowVersion: 'abc'
-      }
-    ];
+        const mockCategories: CategoryReadModel[] = [
+            {
+                categoryId: 1,
+                name: 'Electronics',
+                description: 'Devices',
+                createdAtUtc: new Date().toISOString(),
+                modifiedAtUtc: null,
+                rowVersion: 'abc'
+            }
+        ];
 
-    categoryServiceMock.getAll.mockReturnValue(of(mockCategories));
+        categoryServiceMock.getAll.mockReturnValue(of(mockCategories));
 
-    fixture.detectChanges();
+        fixture.detectChanges();
 
-    const compiled = fixture.nativeElement as HTMLElement;
-
-    const rows = compiled.querySelectorAll('tbody tr');
-
-    expect(rows.length).toBe(1);
-    expect(rows[0].textContent).toContain('Electronics');
-  });
+        expect(component.categories.length).toBe(1);
+        expect(categoryServiceMock.getAll).toHaveBeenCalled();
+    });
 
 
-  // ----- Test #4
-  it('should display error message when API fails', () => {
+    // ----- Test #3
+    it('should display categories in table', () => {
 
-    categoryServiceMock.getAll.mockReturnValue(
-      throwError(() => ({ detail: 'API error occurred' }))
-    );
+        const mockCategories: CategoryReadModel[] = [
+            {
+                categoryId: 1,
+                name: 'Electronics',
+                description: 'Devices',
+                createdAtUtc: new Date().toISOString(),
+                modifiedAtUtc: null,
+                rowVersion: 'abc'
+            }
+        ];
 
-    fixture.detectChanges();
+        categoryServiceMock.getAll.mockReturnValue(of(mockCategories));
 
-    const compiled = fixture.nativeElement as HTMLElement;
+        fixture.detectChanges();
 
-    expect(compiled.textContent).toContain('API error occurred');
-  });
+        const compiled = fixture.nativeElement as HTMLElement;
+
+        // Check that the category name is displayed in the table header or body
+        expect(compiled.textContent).toContain('Electronics');
+
+        // Check that the table has one row with the category name
+        const rows = compiled.querySelectorAll('tbody tr');
+
+        // Check that there is exactly one row and it contains the category name
+        expect(rows.length).toBe(1);
+        expect(rows[0].textContent).toContain('Electronics');
+
+    });
+
+
+    // ----- Test #4
+    it('should display error message when API fails', () => {
+
+        categoryServiceMock.getAll.mockReturnValue(
+            throwError(() => ({ detail: 'API error occurred' }))
+        );
+
+        fixture.detectChanges();
+
+        const compiled = fixture.nativeElement as HTMLElement;
+
+        expect(compiled.textContent).toContain('API error occurred');
+    });
 
 
 });
