@@ -52,12 +52,10 @@ describe('LoginComponent', () => {
 
             providers: [
                 provideRouter([]),
-
                 {
                     provide: AuthService,
                     useValue: authServiceMock
                 }
-
             ]
 
         }).compileComponents();

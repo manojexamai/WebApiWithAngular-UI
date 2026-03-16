@@ -54,6 +54,24 @@ As you can see, the JWT Token from the API Application provides the ASP.NET Iden
 - Permissions[]
 
 
+The Permissions are to be configured in the API Project:
+1. At the BASE API LEVEL: by ensuring the JWT Authentication Scheme
+   ```
+      [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+   ```
+2. At the CONTROLLER LEVEL: 
+   ```
+      [Authorize(Roles = "Admin")]
+   ```
+3. At the ACTION LEVEL
+   ```
+      [Authorize(Policy = "CanAddCategory")]
+
+      or
+
+      [Authorize(Policy = Permissions.CanAddCategory)]
+   ```
+
 ---
 
 # The auth foundation used by the Angular stack
@@ -66,7 +84,7 @@ As you can see, the JWT Token from the API Application provides the ASP.NET Iden
 | AuthInterceptor   | Adds Authorization: Bearer header  |
 | AuthGuard	        | Protects routes                    |
 | PermissionService | Checks permissions                 |
-| LoginComponent	| UI for login                       |
+| LoginComponent	  | UI for login                       |
 
 
 ```
@@ -101,6 +119,13 @@ src/app
 
 - Run a Build on the project to ensure it compiles successfully.
 - You might need to upgrade the Angular Build and CLI version.  Refer notes for info.
+  ```
+    1. > ng update @angular/cli @angular/core @angular/build
+    2. > npm install --save-dev @angular/build@latest
+    3. delete package-lock.json
+    4. delete node_modules folder
+    5. > npm install
+  ```
 
 ## 02. Create Authentication Models
 
@@ -122,7 +147,7 @@ src/app/core/services/auth.service.ts
 ## 04. Add the Login Component.
 
 ```
-    > ng g c features/auth/components/login/login --standalone
+    > ng g c features/auth/components/login --standalone
 ```
 
 Then, rename the generated files to add the `.component` suffix:
@@ -157,17 +182,24 @@ STEPS:
 4. Customize the UI with CSS in the `login.component.css` file, if needed.
 5. Define the tests in the `login.component.spec.ts` file
 6. Build
-7. Test
 
 
 ## 05. Register the Route in `app.routes.ts` 
 
-```
-{
-  path: 'login',
-  component: LoginComponent
-}
-```
+1. Register the route
+  ```
+  {
+    path: 'login',
+    component: LoginComponent
+  }
+  ```
+2. Build
+3. Test
+4. Run the API project and the Angular Project
+  - Manually navigate to the `/login` page
+  - Enter login credentials 
+  - See if the JWT token is added to the `localStorage` in the **Browser Developer Tools > Applications** tab
+
 
 ## 06. Create the Auth Interceptor 
 
@@ -180,10 +212,12 @@ STEPS:
 - Register the `authInterceptor` in the provider's HttpClient WithInterceptors collection!
 - Ensure the sequence of how the interceptors are processed, is correct.
 
+
 ## 08. Validate that the code is building and testing fine.
 
 - Build
 - Test
+
 
 ## 09. Create the AuthGaurd and Register it in `app.routes.ts`
 
@@ -192,6 +226,7 @@ The **AuthGaurd** acts as the First Protection Layer for the routes in the Angul
 To create the Gaurd, run the following command:
 ```
 > ng g guard core/guards/auth --functional
+Which type of guard would you like to create?: CanActivate
 ```
 
 This will create:
@@ -287,7 +322,7 @@ configure the permissions in the `app.routes.ts` file
 
 ## 13. Add Permission-Based UI
 
-Control the UI elements based on permissions in the `category-list.component.ts` file:
+Control the UI elements based on permissions in the `category-list.component.html` file:
 
 ```
 <button
@@ -296,6 +331,19 @@ Control the UI elements based on permissions in the `category-list.component.ts`
   Add Category
 </button>
 ```
+
+You can also control the UI Layout Menu option in the `app.html` file:
+```
+  @if (authService.isAuthenticated()) {
+      <li class="nav-item">
+          <a class="nav-link" routerLink="/categories"
+              routerLinkActive="active">
+              Categories
+          </a>
+      </li>
+  }
+```
+
 
 NOTE: 
 Since the CategoryListComponent now injects the `AuthService`, 
